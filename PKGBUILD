@@ -5,7 +5,7 @@
 # Contributor: Özgür Sarıer <ozgursarier1011601115[at]gmail[dot]com>
 
 pkgname=viber
-pkgver=21.8.0.11
+pkgver=23.2.0.3
 pkgrel=1
 pkgdesc="Proprietary cross-platform IM and VoIP software"
 arch=('x86_64')
@@ -13,16 +13,19 @@ url='https://www.viber.com'
 license=('custom')
 depends=('libxss' 'xcb-util-cursor' 'xcb-util-image' 'xcb-util-keysyms' 'xcb-util-renderutil' 'xcb-util-wm' 'libxss'
 	'openssl' 'libpulse' 'alsa-lib' 'nss' 'libxcomposite' 'libxcursor' 'libxdamage'
-	'gst-plugins-base' 'gst-plugins-good' 'gst-plugins-ugly' 'gst-plugins-bad' 'gst-libav' 'libxslt' 'openssl-1.1')
+	'gst-plugins-base' 'gst-plugins-good' 'gst-plugins-ugly' 'gst-plugins-bad' 'gst-libav' 'libxslt' 'openssl-1.1' 'snappy' 'libjpeg')
 options=('!strip')
 source=("$pkgname-$pkgver.deb::https://download.cdn.viber.com/cdn/desktop/Linux/viber.deb")
-sha256sums=('46b39b98ddb540e9b99e4d11d9abe0087d2e96b7e2508a363e7c985af41a195c')
+sha256sums=('f561e22365a5b2012108f92b42802e9e617a9526f69f9460409dbeb1d9d24a13')
 
 prepare() {
   cd "$srcdir"
 
   tar -xf control.tar.xz
-  tar -Jxf data.tar.xz
+
+  # exclude libjpeg from source to fix unavailable camera/video issue, the system one will be used instead
+  tar -Jxf data.tar.xz --exclude="opt/viber/lib/libjpeg.so.8"
+
   sed -e 's|Exec=/opt/viber/Viber|Exec=viber|g' \
       -e 's|/usr/share/pixmaps/viber.png|viber.png|g' \
       -i usr/share/applications/viber.desktop
@@ -32,8 +35,8 @@ package() {
   cd "$srcdir"
 
   install -dm755 "$pkgdir/opt"
-  cp -r "$srcdir/opt/viber/" "$pkgdir/opt/"
-  install -Dm644 usr/share/applications/viber.desktop -t "$pkgdir/usr/share/applications/"
+  cp -dpr --no-preserve=ownership "$srcdir/opt/viber/" "$pkgdir/opt/"
+  install -Dm644 usr/share/applications/viber.desktop "$pkgdir/usr/share/applications/com.viber.Viber.desktop"
   install -Dm644 copyright "$pkgdir/usr/share/licenses/viber/LICENSE"
 
   install -dm755 "$pkgdir/usr/bin/"

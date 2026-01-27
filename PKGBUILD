@@ -6,7 +6,7 @@
 
 pkgname=viber
 pkgver=27.0.0.1
-pkgrel=2
+pkgrel=3
 pkgdesc="Proprietary cross-platform IM and VoIP software"
 arch=('x86_64')
 url='https://www.viber.com'
@@ -14,7 +14,7 @@ license=('custom')
 depends=('libxss' 'xcb-util-cursor' 'xcb-util-image' 'xcb-util-keysyms' 'xcb-util-renderutil' 'xcb-util-wm' 'libxss'
 	'openssl' 'libpulse' 'alsa-lib' 'nss' 'libxcomposite' 'libxcursor' 'libxdamage'
 	'gst-plugins-base' 'gst-plugins-good' 'gst-plugins-ugly' 'gst-plugins-bad' 'gst-libav' 'libxslt'
-	'snappy' 'libjpeg' 'numactl' 'libxml2-legacy')
+	'snappy' 'libjpeg6' 'numactl' 'libxml2-legacy')
 options=('!strip')
 source=("$pkgname-$pkgver.deb::https://download.cdn.viber.com/cdn/desktop/Linux/viber.deb")
 sha256sums=('15dcf07959270999a8015c4ffdb933f4a7f095fbccf23880a86a3ce7dc622390')

@@ -1,7 +1,7 @@
 pkgbase = viber
 	pkgdesc = Proprietary cross-platform IM and VoIP software
 	pkgver = 27.0.0.1
-	pkgrel = 2
+	pkgrel = 3
 	url = https://www.viber.com
 	arch = x86_64
 	license = custom
@@ -26,7 +26,7 @@ pkgbase = viber
 	depends = gst-libav
 	depends = libxslt
 	depends = snappy
-	depends = libjpeg
+	depends = libjpeg6
 	depends = numactl
 	depends = libxml2-legacy
 	options = !strip

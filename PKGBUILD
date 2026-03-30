@@ -7,7 +7,7 @@
 
 pkgname=viber
 pkgver=27.3.0.2
-pkgrel=2
+pkgrel=3
 pkgdesc="Free and secure calls and messages to anyone, anywhere, on any device and network, in any country!"
 arch=('x86_64')
 url='https://www.viber.com'
@@ -16,7 +16,6 @@ depends=(
   'libxml2-legacy'
   'libxslt'
   'libxss'
-  'pipewire-jack'
   'qt6-multimedia-ffmpeg'
 )
 optdepends=(

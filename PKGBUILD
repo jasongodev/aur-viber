@@ -7,7 +7,7 @@
 
 pkgname=viber
 pkgver=27.3.0.2
-pkgrel=1
+pkgrel=2
 pkgdesc="Free and secure calls and messages to anyone, anywhere, on any device and network, in any country!"
 arch=('x86_64')
 url='https://www.viber.com'
@@ -28,7 +28,7 @@ optdepends=(
 conflicts=('viber')
 options=('!debug' '!strip')
 source=(
-  'https://download.cdn.viber.com/cdn/desktop/Linux/viber.deb'
+  "viber-$pkgver-$pkgrel.deb::https://download.cdn.viber.com/cdn/desktop/Linux/viber.deb"
   'https://www.viber.com/app/uploads/Viber-Terms-of-Service-EN-March-2026.pdf'
 )
 b2sums=('12dc832a8ae7934b1bcb7d0d9ea702159dbaf1f1f4b91ddf00920a01ca8c34cd7d522e7b824c60413cdb97003b929ade91e7aa47feef7804497b140ae4a25d5f'

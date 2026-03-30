@@ -1,52 +1,54 @@
-# Maintainer: Sandor Nagy <sandor[dot]nagy[at]kdemail[dot]net>
+# Maintainer: Jason Go <jasongo@jasongo.net>
+# Contributor: Sandor Nagy <sandor[dot]nagy[at]kdemail[dot]net>
 # Contributor: Mladen Pejaković <pejakm[at]autistici[dot]org>
 # Contributor: Morealaz <morealaz@gmail.com>
 # Contributor: Lev Lybin <lev.lybin@gmail.com>
 # Contributor: Özgür Sarıer <ozgursarier1011601115[at]gmail[dot]com>
 
 pkgname=viber
-pkgver=27.0.0.1
-pkgrel=3
-pkgdesc="Proprietary cross-platform IM and VoIP software"
+pkgver=27.3.0.2
+pkgrel=1
+pkgdesc="Free and secure calls and messages to anyone, anywhere, on any device and network, in any country!"
 arch=('x86_64')
 url='https://www.viber.com'
-license=('custom')
-depends=('libxss' 'xcb-util-cursor' 'xcb-util-image' 'xcb-util-keysyms' 'xcb-util-renderutil' 'xcb-util-wm' 'libxss'
-	'openssl' 'libpulse' 'alsa-lib' 'nss' 'libxcomposite' 'libxcursor' 'libxdamage'
-	'gst-plugins-base' 'gst-plugins-good' 'gst-plugins-ugly' 'gst-plugins-bad' 'gst-libav' 'libxslt'
-	'snappy' 'libjpeg6' 'numactl' 'libxml2-legacy')
-options=('!strip')
-source=("$pkgname-$pkgver.deb::https://download.cdn.viber.com/cdn/desktop/Linux/viber.deb")
-sha256sums=('15dcf07959270999a8015c4ffdb933f4a7f095fbccf23880a86a3ce7dc622390')
+license=('LicenseRef-Viber-TOS')
+depends=(
+  'libxml2-legacy'
+  'libxslt'
+  'libxss'
+  'pipewire-jack'
+  'qt6-multimedia-ffmpeg'
+)
+optdepends=(
+  'firefox: To open external links and media'
+  'epiphany: To open external links and media'
+  'konqueror: To open external links and media'
+  'gnome-shell-extension-appindicator: To show tray icon in GNOME'
+)
+conflicts=('viber')
+options=('!debug' '!strip')
+source=(
+  'https://download.cdn.viber.com/cdn/desktop/Linux/viber.deb'
+  'https://www.viber.com/app/uploads/Viber-Terms-of-Service-EN-March-2026.pdf'
+)
+b2sums=('12dc832a8ae7934b1bcb7d0d9ea702159dbaf1f1f4b91ddf00920a01ca8c34cd7d522e7b824c60413cdb97003b929ade91e7aa47feef7804497b140ae4a25d5f'
+        '7a935c23873efaf903fa686c74a5a9ade31c29c8dee54f4d8f98742ffd3624ff203bd681b7ae525b2118e74680edf471b9ac14ac6cd2b2f07b13dc5960600c92')
 
 prepare() {
-  cd "$srcdir"
-
-  tar -xf control.tar.xz
-
-  # exclude libjpeg from source to fix unavailable camera/video issue, the system one will be used instead
-  tar -Jxf data.tar.xz --exclude="opt/viber/lib/libjpeg.so.8"
-
-  sed -e 's|Exec=/opt/viber/Viber|Exec=viber|g' \
-      -e 's|/usr/share/pixmaps/viber.png|viber.png|g' \
-      -i usr/share/applications/viber.desktop
+  bsdtar -xf data.tar.xz -C ./
 }
 
 package() {
-  cd "$srcdir"
-
-  install -dm755 "$pkgdir/opt"
-  cp -dpr --no-preserve=ownership "$srcdir/opt/viber/" "$pkgdir/opt/"
-  install -Dm644 usr/share/applications/viber.desktop "$pkgdir/usr/share/applications/com.viber.Viber.desktop"
-  install -Dm644 copyright "$pkgdir/usr/share/licenses/viber/LICENSE"
-
+  # Link Viber binary
   install -dm755 "$pkgdir/usr/bin/"
   ln -s /opt/viber/Viber "$pkgdir/usr/bin/viber"
 
-  # install icons
-  cd "$srcdir/opt/viber/"
-  for iconsize in 16x16 24x24 32x32 48x48 64x64 96x96 128x128 256x256; do
-    install -Dm644 icons/$iconsize.png "$pkgdir/usr/share/icons/hicolor/$iconsize/apps/viber.png"
-  done
-  install -Dm644 icons/Viber.svg "$pkgdir/usr/share/icons/hicolor/scalable/apps/viber.svg"
+  # Copy all deb files
+  cp -dr --no-preserve=ownership {opt,usr} "$pkgdir"
+
+  # Copy Viber.svg to viber.svg
+  cp "$pkgdir/usr/share/icons/hicolor/scalable/apps/Viber.svg" "$pkgdir/usr/share/icons/hicolor/scalable/apps/viber.svg"
+
+  # Copy updated license
+  install -Dm644 -t "$pkgdir/usr/share/licenses/viber/" Viber-Terms-of-Service-EN-March-2026.pdf
 }

@@ -7,7 +7,7 @@
 
 pkgname=viber
 pkgver=27.3.0.2
-pkgrel=4
+pkgrel=5
 pkgdesc="Free and secure calls and messages to anyone, anywhere, on any device and network, in any country!"
 arch=('x86_64')
 url='https://www.viber.com'
@@ -19,28 +19,43 @@ depends=(
   'qt6-multimedia'
 )
 optdepends=(
-  'firefox: To open external links and media'
-  'epiphany: To open external links and media'
-  'konqueror: To open external links and media'
+  'qt6-multimedia-ffmpeg: For issues with gstreamer backend'
+  'qt6-multimedia-gstreamer: For issues with ffmpeg backend'
+  'gst-plugins-bad: For camera and playback issues with gstreamer backend'
+  'gst-plugins-ugly: For camera and playback issues with gstreamer backend'
+  'jack2: For audio issues with pipewire-jack'
+  'pipewire-jack: For audio issues with jack2'
+  'pavucontrol: Manage audio devices and sound volume'
+  'pipewire-pulse: pavucontrol needs this'
+  'nvidia-utils: Provides VDPAU backend libvdpau_nvidia.so'
+  'epiphany: For external links and media'
+  'firefox: For external links and media'
+  'konqueror: For external links and media'
   'gnome-shell-extension-appindicator: To show tray icon in GNOME'
 )
 conflicts=('viber')
 options=('!debug' '!strip')
 source=(
   "viber-$pkgver-$pkgrel.deb::https://download.cdn.viber.com/cdn/desktop/Linux/viber.deb"
+  'viber.sh.in'
   'https://www.viber.com/app/uploads/Viber-Terms-of-Service-EN-March-2026.pdf'
 )
 b2sums=('12dc832a8ae7934b1bcb7d0d9ea702159dbaf1f1f4b91ddf00920a01ca8c34cd7d522e7b824c60413cdb97003b929ade91e7aa47feef7804497b140ae4a25d5f'
+        '9ea86d0ccf308c5b14ff7096f4324d835603455e45befbab5c48eb055155f3dae18049906d580660d7c46423617931815846f4f3a43ddad3850687911da851ac'
         '7a935c23873efaf903fa686c74a5a9ade31c29c8dee54f4d8f98742ffd3624ff203bd681b7ae525b2118e74680edf471b9ac14ac6cd2b2f07b13dc5960600c92')
 
 prepare() {
   bsdtar -xf data.tar.xz -C ./
+
+  # Change binary path
+  sed -i -e 's|Exec=/opt/viber/Viber|Exec=/usr/bin/viber|' \
+         -e '/^Path=/d' \
+         ./usr/share/applications/viber.desktop
 }
 
 package() {
-  # Link Viber binary
-  install -dm755 "$pkgdir/usr/bin/"
-  ln -s /opt/viber/Viber "$pkgdir/usr/bin/viber"
+  # Install binary wrapper
+  install -Dm755 viber.sh.in "$pkgdir/usr/bin/viber"
 
   # Copy all deb files
   cp -dr --no-preserve=ownership {opt,usr} "$pkgdir"

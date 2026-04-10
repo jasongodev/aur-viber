@@ -8,3 +8,4 @@
 !LICENSES/**
 !REUSE.toml
 !.nvchecker.toml
+!*.sh.in
